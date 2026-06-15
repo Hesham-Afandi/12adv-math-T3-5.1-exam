@@ -1,461 +1,663 @@
 <!DOCTYPE html>
-<html lang="en" dir="ltr">
+<html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>📐 Grade 12 Advanced Math - Antiderivatives & Integrals Exam</title>
+    <title>📐 Grade 12 Advanced Math - Antiderivatives & Integrals (1.1)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Inter', sans-serif; }
+        body { font-family: 'Cairo', sans-serif; }
+        body.en-mode { font-family: 'Inter', sans-serif; }
         .correct { background-color: #dcfce7 !important; border-color: #16a34a !important; }
         .incorrect { background-color: #fee2e2 !important; border-color: #dc2626 !important; }
         .formula { font-family: 'Times New Roman', serif; font-style: italic; direction: ltr; display: inline-block; }
         .timer-warning { color: #dc2626 !important; animation: pulse 1s infinite; }
         @keyframes pulse { 50% { opacity: 0.7; } }
         @media print { .no-print { display: none !important; } }
-        .success-badge { 
-            display: inline-block; 
-            padding: 4px 12px; 
-            border-radius: 20px; 
-            font-weight: bold;
-            font-size: 0.875rem;
-        }
+        .success-badge { display: inline-block; padding: 4px 12px; border-radius: 20px; font-weight: bold; font-size: 0.875rem; }
         .grade-excellent { background: #dcfce7; color: #166534; }
         .grade-good { background: #fef3c7; color: #92400e; }
         .grade-pass { background: #dbeafe; color: #1e40af; }
         .grade-fail { background: #fee2e2; color: #991b1b; }
+        
+        /* Language Switcher */
+        .lang-switch {
+            position: fixed; top: 16px; left: 16px; z-index: 100;
+            background: white; padding: 6px; border-radius: 30px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.15); display: flex; gap: 4px;
+            border: 2px solid #4F46E5;
+        }
+        [dir="ltr"] .lang-switch { left: auto; right: 16px; }
+        .lang-btn {
+            padding: 6px 14px; border-radius: 20px; cursor: pointer; font-weight: bold;
+            transition: all 0.3s; border: none; font-size: 0.875rem;
+            background: transparent; color: #6b7280;
+        }
+        .lang-btn.active { background: #4F46E5; color: white; box-shadow: 0 2px 6px rgba(79,70,229,0.4); }
+        .lang-btn:hover:not(.active) { background: #eef2ff; color: #4F46E5; }
     </style>
 </head>
 <body class="bg-gray-50 text-gray-800 p-4 md:p-8 min-h-screen">
 
+    <!-- Language Switcher -->
+    <div class="lang-switch no-print">
+        <button class="lang-btn active" onclick="setLanguage('ar')" id="btn-ar">عربي</button>
+        <button class="lang-btn" onclick="setLanguage('en')" id="btn-en">EN</button>
+    </div>
+
     <!-- Timer -->
     <div id="timer-container" class="max-w-4xl mx-auto mb-4 text-center no-print">
         <div class="bg-white p-4 rounded-xl shadow-md inline-block border-2 border-indigo-100">
-            <span class="text-gray-600 ml-2">⏱️ Time Remaining:</span>
+            <span class="text-gray-600 ml-2" data-ar="⏱️ الوقت المتبقي:" data-en="⏱️ Time Remaining:">⏱️ الوقت المتبقي:</span>
             <span id="timer" class="text-2xl font-bold text-indigo-600 font-mono">60:00</span>
         </div>
     </div>
 
     <!-- Controls -->
     <div class="max-w-4xl mx-auto mb-6 flex flex-wrap gap-3 justify-center no-print">
-        <button onclick="toggleAnswers()" class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-lg font-medium transition shadow cursor-pointer">
-            👁️ Show / Hide Model Answers
-        </button>
-        <button onclick="window.print()" class="bg-gray-800 hover:bg-gray-900 text-white px-5 py-2 rounded-lg font-medium transition shadow cursor-pointer">
-            🖨️ Print / Save as PDF
-        </button>
+        <button onclick="toggleAnswers()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2 rounded-lg font-medium transition shadow cursor-pointer" data-ar="👁️ إظهار / إخفاء الإجابات" data-en="👁️ Show / Hide Answers">👁️ إظهار / إخفاء الإجابات</button>
+        <button onclick="window.print()" class="bg-gray-800 hover:bg-gray-900 text-white px-5 py-2 rounded-lg font-medium transition shadow cursor-pointer" data-ar="🖨️ طباعة / PDF" data-en="🖨️ Print / PDF">🖨️ طباعة / PDF</button>
     </div>
 
     <!-- Header -->
-    <header class="max-w-4xl mx-auto bg-white p-6 rounded-xl shadow-md mb-8 border-l-4 border-indigo-600">
+    <header class="max-w-4xl mx-auto bg-white p-6 rounded-xl shadow-md mb-8 border-r-4 border-indigo-600">
         <div class="text-center">
-            <h1 class="text-2xl md:text-3xl font-bold text-gray-900 mb-2">📐 Grade 12 Advanced Mathematics</h1>
-            <h2 class="text-lg text-indigo-600 font-semibold">Unit 5.1: Antiderivatives & Indefinite Integrals</h2>
+            <h1 class="text-2xl md:text-3xl font-bold text-gray-900 mb-2" data-ar="📐 رياضيات الصف الثاني عشر متقدم" data-en="📐 Grade 12 Advanced Mathematics">📐 رياضيات الصف الثاني عشر متقدم</h1>
+            <h2 class="text-lg text-indigo-600 font-semibold" data-ar="الوحدة 1.1: المشتقات العكسية والتكاملات غير المحددة" data-en="Unit 1.1: Antiderivatives & Indefinite Integrals">الوحدة 1.1: المشتقات العكسية والتكاملات غير المحددة</h2>
+            <p class="text-sm text-gray-600 mt-2" data-ar="القواعد الأساسية، الدوال المثلثية، والتطبيقات" data-en="Basic Rules, Trigonometric Functions & Applications">القواعد الأساسية، الدوال المثلثية، والتطبيقات</p>
         </div>
         <div class="mt-4 flex flex-wrap justify-center gap-4 text-sm text-gray-600">
-            <span>📅 Date: <input type="text" class="border-b border-gray-400 bg-transparent w-28 text-center"></span>
-            <span>👤 Name: <input type="text" id="studentName" class="border-b border-gray-400 bg-transparent w-32 text-center" placeholder="Enter Name"></span>
-            <span>⏱️ Duration: 60 min</span>
-            <span>📊 Total: 100 Marks</span>
+            <span><span data-ar="📅 التاريخ:" data-en="📅 Date:">📅 التاريخ:</span> <input type="text" class="border-b border-gray-400 bg-transparent w-28 text-center"></span>
+            <span><span data-ar="👤 الاسم:" data-en="👤 Name:">👤 الاسم:</span> <input type="text" id="studentName" class="border-b border-gray-400 bg-transparent w-32 text-center" placeholder="Enter name"></span>
+            <span><span data-ar="⏱️ المدة: 60 دقيقة" data-en="⏱️ Duration: 60 min">⏱️ المدة: 60 دقيقة</span></span>
+            <span><span data-ar="📊 المجموع: 100 درجة" data-en="📊 Total: 100 pts">📊 المجموع: 100 درجة</span></span>
         </div>
     </header>
 
-    <main class="max-w-4xl mx-auto space-y-8">
-
-        <!-- Section 1: Basic Concepts -->
-        <section class="bg-white p-6 rounded-xl shadow-lg">
-            <h2 class="text-xl font-bold mb-4 text-indigo-700">🔹 Part 1: Basic Concepts & Definitions</h2>
-            <ol id="section1-list" class="space-y-4 text-sm">
-                <li class="border-l-4 border-indigo-500 pl-4 py-2" id="q-1">
-                    <strong>1.</strong> What is an antiderivative of a function f(x)?<br>
-                    <label class="ml-4 cursor-pointer block mt-1"><input type="radio" name="q1" value="a" class="mr-2"> a) A function whose derivative equals f(x)</label>
-                    <label class="ml-4 cursor-pointer block mt-1"><input type="radio" name="q1" value="b" class="mr-2"> b) A function that divides f(x)</label>
-                    <label class="ml-4 cursor-pointer block mt-1"><input type="radio" name="q1" value="c" class="mr-2"> c) A function that multiplies f(x)</label>
-                    <label class="ml-4 cursor-pointer block mt-1"><input type="radio" name="q1" value="d" class="mr-2"> d) A function that equals zero</label>
-                    <div class="answer-box text-green-700 mt-2 font-medium hidden">✅ Answer: a)</div>
-                </li>
-                <li class="border-l-4 border-indigo-500 pl-4 py-2" id="q-2">
-                    <strong>2.</strong> If F(x) is an antiderivative of f(x), what is the general form of all antiderivatives?<br>
-                    <label class="ml-4 cursor-pointer block mt-1"><input type="radio" name="q2" value="a" class="mr-2"> a) F(x) + 1</label>
-                    <label class="ml-4 cursor-pointer block mt-1"><input type="radio" name="q2" value="b" class="mr-2"> b) F(x) + C, where C is any constant</label>
-                    <label class="ml-4 cursor-pointer block mt-1"><input type="radio" name="q2" value="c" class="mr-2"> c) F(x) × C</label>
-                    <label class="ml-4 cursor-pointer block mt-1"><input type="radio" name="q2" value="d" class="mr-2"> d) F(x) - C</label>
-                    <div class="answer-box text-green-700 mt-2 font-medium hidden">✅ Answer: b)</div>
-                </li>
-                <li class="border-l-4 border-indigo-500 pl-4 py-2" id="q-3">
-                    <strong>3.</strong> What does the "+C" (constant of integration) represent physically?<br>
-                    <label class="ml-4 cursor-pointer block mt-1"><input type="radio" name="q3" value="a" class="mr-2"> a) The maximum value of the function</label>
-                    <label class="ml-4 cursor-pointer block mt-1"><input type="radio" name="q3" value="b" class="mr-2"> b) The unknown starting parameter or initial condition</label>
-                    <label class="ml-4 cursor-pointer block mt-1"><input type="radio" name="q3" value="c" class="mr-2"> c) The slope of the function</label>
-                    <label class="ml-4 cursor-pointer block mt-1"><input type="radio" name="q3" value="d" class="mr-2"> d) The area under the curve</label>
-                    <div class="answer-box text-green-700 mt-2 font-medium hidden">✅ Answer: b)</div>
-                </li>
-                <li class="border-l-4 border-indigo-500 pl-4 py-2" id="q-4">
-                    <strong>4.</strong> According to Theorem 1.1, if F and G are both antiderivatives of f on an interval, then:<br>
-                    <label class="ml-4 cursor-pointer block mt-1"><input type="radio" name="q4" value="a" class="mr-2"> a) G(x) = F(x) + C for some constant C</label>
-                    <label class="ml-4 cursor-pointer block mt-1"><input type="radio" name="q4" value="b" class="mr-2"> b) G(x) = F(x) × C</label>
-                    <label class="ml-4 cursor-pointer block mt-1"><input type="radio" name="q4" value="c" class="mr-2"> c) G(x) = F(x)</label>
-                    <label class="ml-4 cursor-pointer block mt-1"><input type="radio" name="q4" value="d" class="mr-2"> d) G(x) = F(x) - C</label>
-                    <div class="answer-box text-green-700 mt-2 font-medium hidden">✅ Answer: a)</div>
-                </li>
-            </ol>
-        </section>
-
-        <!-- Section 2: Power Rule -->
-        <section class="bg-white p-6 rounded-xl shadow-lg">
-            <h2 class="text-xl font-bold mb-4 text-indigo-700">🔹 Part 2: Power Rule for Integration</h2>
-            <ol id="section2-list" class="space-y-4 text-sm">
-                <li class="border-l-4 border-indigo-500 pl-4 py-2" id="q-5">
-                    <strong>5.</strong> What is the integral of xⁿ dx (where n ≠ -1)?<br>
-                    <label class="ml-4 cursor-pointer block mt-1"><input type="radio" name="q5" value="a" class="mr-2"> a) xⁿ⁺¹/(n+1) + C</label>
-                    <label class="ml-4 cursor-pointer block mt-1"><input type="radio" name="q5" value="b" class="mr-2"> b) nxⁿ⁻¹ + C</label>
-                    <label class="ml-4 cursor-pointer block mt-1"><input type="radio" name="q5" value="c" class="mr-2"> c) xⁿ⁻¹/(n-1) + C</label>
-                    <label class="ml-4 cursor-pointer block mt-1"><input type="radio" name="q5" value="d" class="mr-2"> d) nxⁿ⁺¹ + C</label>
-                    <div class="answer-box text-green-700 mt-2 font-medium hidden">✅ Answer: a)</div>
-                </li>
-                <li class="border-l-4 border-indigo-500 pl-4 py-2" id="q-6">
-                    <strong>6.</strong> Evaluate: ∫x¹⁷ dx<br>
-                    <label class="ml-4 cursor-pointer block mt-1"><input type="radio" name="q6" value="a" class="mr-2"> a) x¹⁸/18 + C</label>
-                    <label class="ml-4 cursor-pointer block mt-1"><input type="radio" name="q6" value="b" class="mr-2"> b) 17x¹⁶ + C</label>
-                    <label class="ml-4 cursor-pointer block mt-1"><input type="radio" name="q6" value="c" class="mr-2"> c) x¹⁶/16 + C</label>
-                    <label class="ml-4 cursor-pointer block mt-1"><input type="radio" name="q6" value="d" class="mr-2"> d) 18x¹⁸ + C</label>
-                    <div class="answer-box text-green-700 mt-2 font-medium hidden">✅ Answer: a)</div>
-                </li>
-                <li class="border-l-4 border-indigo-500 pl-4 py-2" id="q-7">
-                    <strong>7.</strong> Why doesn't the power rule work for ∫x⁻¹ dx?<br>
-                    <label class="ml-4 cursor-pointer block mt-1"><input type="radio" name="q7" value="a" class="mr-2"> a) It results in division by zero</label>
-                    <label class="ml-4 cursor-pointer block mt-1"><input type="radio" name="q7" value="b" class="mr-2"> b) The function is undefined</label>
-                    <label class="ml-4 cursor-pointer block mt-1"><input type="radio" name="q7" value="c" class="mr-2"> c) The power is negative</label>
-                    <label class="ml-4 cursor-pointer block mt-1"><input type="radio" name="q7" value="d" class="mr-2"> d) The integral doesn't exist</label>
-                    <div class="answer-box text-green-700 mt-2 font-medium hidden">✅ Answer: a)</div>
-                </li>
-                <li class="border-l-4 border-indigo-500 pl-4 py-2" id="q-8">
-                    <strong>8.</strong> What is ∫x⁻¹ dx?<br>
-                    <label class="ml-4 cursor-pointer block mt-1"><input type="radio" name="q8" value="a" class="mr-2"> a) ln|x| + C</label>
-                    <label class="ml-4 cursor-pointer block mt-1"><input type="radio" name="q8" value="b" class="mr-2"> b) x⁰/0 + C</label>
-                    <label class="ml-4 cursor-pointer block mt-1"><input type="radio" name="q8" value="c" class="mr-2"> c) -x⁻² + C</label>
-                    <label class="ml-4 cursor-pointer block mt-1"><input type="radio" name="q8" value="d" class="mr-2"> d) -1/x² + C</label>
-                    <div class="answer-box text-green-700 mt-2 font-medium hidden">✅ Answer: a)</div>
-                </li>
-            </ol>
-        </section>
-
-        <!-- Section 3: Trigonometric & Exponential Functions -->
-        <section class="bg-white p-6 rounded-xl shadow-lg">
-            <h2 class="text-xl font-bold mb-4 text-indigo-700">🔹 Part 3: Trigonometric & Exponential Integrals</h2>
-            <ol id="section3-list" class="space-y-4 text-sm">
-                <li class="border-l-4 border-indigo-500 pl-4 py-2" id="q-9">
-                    <strong>9.</strong> What is ∫cos x dx?<br>
-                    <label class="ml-4 cursor-pointer block mt-1"><input type="radio" name="q9" value="a" class="mr-2"> a) sin x + C</label>
-                    <label class="ml-4 cursor-pointer block mt-1"><input type="radio" name="q9" value="b" class="mr-2"> b) -sin x + C</label>
-                    <label class="ml-4 cursor-pointer block mt-1"><input type="radio" name="q9" value="c" class="mr-2"> c) cos x + C</label>
-                    <label class="ml-4 cursor-pointer block mt-1"><input type="radio" name="q9" value="d" class="mr-2"> d) -cos x + C</label>
-                    <div class="answer-box text-green-700 mt-2 font-medium hidden">✅ Answer: a)</div>
-                </li>
-                <li class="border-l-4 border-indigo-500 pl-4 py-2" id="q-10">
-                    <strong>10.</strong> What is ∫sin x dx?<br>
-                    <label class="ml-4 cursor-pointer block mt-1"><input type="radio" name="q10" value="a" class="mr-2"> a) cos x + C</label>
-                    <label class="ml-4 cursor-pointer block mt-1"><input type="radio" name="q10" value="b" class="mr-2"> b) -cos x + C</label>
-                    <label class="ml-4 cursor-pointer block mt-1"><input type="radio" name="q10" value="c" class="mr-2"> c) sin x + C</label>
-                    <label class="ml-4 cursor-pointer block mt-1"><input type="radio" name="q10" value="d" class="mr-2"> d) -sin x + C</label>
-                    <div class="answer-box text-green-700 mt-2 font-medium hidden">✅ Answer: b)</div>
-                </li>
-                <li class="border-l-4 border-indigo-500 pl-4 py-2" id="q-11">
-                    <strong>11.</strong> What is ∫eˣ dx?<br>
-                    <label class="ml-4 cursor-pointer block mt-1"><input type="radio" name="q11" value="a" class="mr-2"> a) eˣ + C</label>
-                    <label class="ml-4 cursor-pointer block mt-1"><input type="radio" name="q11" value="b" class="mr-2"> b) xeˣ⁻¹ + C</label>
-                    <label class="ml-4 cursor-pointer block mt-1"><input type="radio" name="q11" value="c" class="mr-2"> c) eˣ¹/(x+1) + C</label>
-                    <label class="ml-4 cursor-pointer block mt-1"><input type="radio" name="q11" value="d" class="mr-2"> d) ln|x| + C</label>
-                    <div class="answer-box text-green-700 mt-2 font-medium hidden">✅ Answer: a)</div>
-                </li>
-                <li class="border-l-4 border-indigo-500 pl-4 py-2" id="q-12">
-                    <strong>12.</strong> What is ∫sec²x dx?<br>
-                    <label class="ml-4 cursor-pointer block mt-1"><input type="radio" name="q12" value="a" class="mr-2"> a) tan x + C</label>
-                    <label class="ml-4 cursor-pointer block mt-1"><input type="radio" name="q12" value="b" class="mr-2"> b) sec x + C</label>
-                    <label class="ml-4 cursor-pointer block mt-1"><input type="radio" name="q12" value="c" class="mr-2"> c) -tan x + C</label>
-                    <label class="ml-4 cursor-pointer block mt-1"><input type="radio" name="q12" value="d" class="mr-2"> d) cot x + C</label>
-                    <div class="answer-box text-green-700 mt-2 font-medium hidden">✅ Answer: a)</div>
-                </li>
-            </ol>
-        </section>
-
-        <!-- Section 4: Inverse Trigonometric Functions -->
-        <section class="bg-white p-6 rounded-xl shadow-lg">
-            <h2 class="text-xl font-bold mb-4 text-indigo-700">🔹 Part 4: Inverse Trigonometric Integrals</h2>
-            <ol id="section4-list" class="space-y-4 text-sm">
-                <li class="border-l-4 border-indigo-500 pl-4 py-2" id="q-13">
-                    <strong>13.</strong> What is ∫1/√(1-x²) dx?<br>
-                    <label class="ml-4 cursor-pointer block mt-1"><input type="radio" name="q13" value="a" class="mr-2"> a) sin⁻¹x + C</label>
-                    <label class="ml-4 cursor-pointer block mt-1"><input type="radio" name="q13" value="b" class="mr-2"> b) cos⁻¹x + C</label>
-                    <label class="ml-4 cursor-pointer block mt-1"><input type="radio" name="q13" value="c" class="mr-2"> c) tan⁻¹x + C</label>
-                    <label class="ml-4 cursor-pointer block mt-1"><input type="radio" name="q13" value="d" class="mr-2"> d) sec⁻¹x + C</label>
-                    <div class="answer-box text-green-700 mt-2 font-medium hidden">✅ Answer: a)</div>
-                </li>
-                <li class="border-l-4 border-indigo-500 pl-4 py-2" id="q-14">
-                    <strong>14.</strong> What is ∫1/(1+x²) dx?<br>
-                    <label class="ml-4 cursor-pointer block mt-1"><input type="radio" name="q14" value="a" class="mr-2"> a) tan⁻¹x + C</label>
-                    <label class="ml-4 cursor-pointer block mt-1"><input type="radio" name="q14" value="b" class="mr-2"> b) sin⁻¹x + C</label>
-                    <label class="ml-4 cursor-pointer block mt-1"><input type="radio" name="q14" value="c" class="mr-2"> c) cos⁻¹x + C</label>
-                    <label class="ml-4 cursor-pointer block mt-1"><input type="radio" name="q14" value="d" class="mr-2"> d) cot⁻¹x + C</label>
-                    <div class="answer-box text-green-700 mt-2 font-medium hidden">✅ Answer: a)</div>
-                </li>
-            </ol>
-        </section>
-
-        <!-- Section 5: Linearity & Reverse Chain Rule -->
-        <section class="bg-white p-6 rounded-xl shadow-lg">
-            <h2 class="text-xl font-bold mb-4 text-indigo-700">🔹 Part 5: Linearity & Reverse Chain Rule</h2>
-            <ol id="section5-list" class="space-y-4 text-sm">
-                <li class="border-l-4 border-indigo-500 pl-4 py-2" id="q-15">
-                    <strong>15.</strong> According to the linearity property, ∫[af(x) + bg(x)]dx equals:<br>
-                    <label class="ml-4 cursor-pointer block mt-1"><input type="radio" name="q15" value="a" class="mr-2"> a) a∫f(x)dx + b∫g(x)dx</label>
-                    <label class="ml-4 cursor-pointer block mt-1"><input type="radio" name="q15" value="b" class="mr-2"> b) ∫af(x)dx × ∫bg(x)dx</label>
-                    <label class="ml-4 cursor-pointer block mt-1"><input type="radio" name="q15" value="c" class="mr-2"> c) (a+b)∫[f(x)+g(x)]dx</label>
-                    <label class="ml-4 cursor-pointer block mt-1"><input type="radio" name="q15" value="d" class="mr-2"> d) ab∫f(x)g(x)dx</label>
-                    <div class="answer-box text-green-700 mt-2 font-medium hidden">✅ Answer: a)</div>
-                </li>
-                <li class="border-l-4 border-indigo-500 pl-4 py-2" id="q-16">
-                    <strong>16.</strong> What is ∫f'(x)/f(x) dx?<br>
-                    <label class="ml-4 cursor-pointer block mt-1"><input type="radio" name="q16" value="a" class="mr-2"> a) ln|f(x)| + C</label>
-                    <label class="ml-4 cursor-pointer block mt-1"><input type="radio" name="q16" value="b" class="mr-2"> b) f(x) + C</label>
-                    <label class="ml-4 cursor-pointer block mt-1"><input type="radio" name="q16" value="c" class="mr-2"> c) e^f(x) + C</label>
-                    <label class="ml-4 cursor-pointer block mt-1"><input type="radio" name="q16" value="d" class="mr-2"> d) f'(x) + C</label>
-                    <div class="answer-box text-green-700 mt-2 font-medium hidden">✅ Answer: a)</div>
-                </li>
-                <li class="border-l-4 border-indigo-500 pl-4 py-2" id="q-17">
-                    <strong>17.</strong> Evaluate: ∫tan x dx<br>
-                    <label class="ml-4 cursor-pointer block mt-1"><input type="radio" name="q17" value="a" class="mr-2"> a) ln|tan x| + C</label>
-                    <label class="ml-4 cursor-pointer block mt-1"><input type="radio" name="q17" value="b" class="mr-2"> b) ln|sec x| + C</label>
-                    <label class="ml-4 cursor-pointer block mt-1"><input type="radio" name="q17" value="c" class="mr-2"> c) -ln|cos x| + C</label>
-                    <label class="ml-4 cursor-pointer block mt-1"><input type="radio" name="q17" value="d" class="mr-2"> d) Both b and c</label>
-                    <div class="answer-box text-green-700 mt-2 font-medium hidden">✅ Answer: d)</div>
-                </li>
-            </ol>
-        </section>
-
-        <!-- Section 6: Applications & Initial Value Problems -->
-        <section class="bg-white p-6 rounded-xl shadow-lg">
-            <h2 class="text-xl font-bold mb-4 text-indigo-700">🔹 Part 6: Applications & Initial Value Problems</h2>
-            <ol id="section6-list" class="space-y-4 text-sm">
-                <li class="border-l-4 border-indigo-500 pl-4 py-2" id="q-18">
-                    <strong>18.</strong> In the Space Shuttle example, if y''(t) = -9.8 m/s², what is v(t)?<br>
-                    <label class="ml-4 cursor-pointer block mt-1"><input type="radio" name="q18" value="a" class="mr-2"> a) -9.8t + C</label>
-                    <label class="ml-4 cursor-pointer block mt-1"><input type="radio" name="q18" value="b" class="mr-2"> b) -4.9t² + C</label>
-                    <label class="ml-4 cursor-pointer block mt-1"><input type="radio" name="q18" value="c" class="mr-2"> c) -9.8t² + C</label>
-                    <label class="ml-4 cursor-pointer block mt-1"><input type="radio" name="q18" value="d" class="mr-2"> d) 9.8t + C</label>
-                    <div class="answer-box text-green-700 mt-2 font-medium hidden">✅ Answer: a)</div>
-                </li>
-                <li class="border-l-4 border-indigo-500 pl-4 py-2" id="q-19">
-                    <strong>19.</strong> If v(0) = -30 m/s (initial velocity downward), what is the value of C?<br>
-                    <label class="ml-4 cursor-pointer block mt-1"><input type="radio" name="q19" value="a" class="mr-2"> a) -30</label>
-                    <label class="ml-4 cursor-pointer block mt-1"><input type="radio" name="q19" value="b" class="mr-2"> b) 30</label>
-                    <label class="ml-4 cursor-pointer block mt-1"><input type="radio" name="q19" value="c" class="mr-2"> c) 0</label>
-                    <label class="ml-4 cursor-pointer block mt-1"><input type="radio" name="q19" value="d" class="mr-2"> d) -9.8</label>
-                    <div class="answer-box text-green-700 mt-2 font-medium hidden">✅ Answer: a)</div>
-                </li>
-                <li class="border-l-4 border-indigo-500 pl-4 py-2" id="q-20">
-                    <strong>20.</strong> If y(0) = 30,000 meters (initial altitude), what is the position function y(t)?<br>
-                    <label class="ml-4 cursor-pointer block mt-1"><input type="radio" name="q20" value="a" class="mr-2"> a) -4.9t² - 30t + 30,000</label>
-                    <label class="ml-4 cursor-pointer block mt-1"><input type="radio" name="q20" value="b" class="mr-2"> b) -9.8t² - 30t + 30,000</label>
-                    <label class="ml-4 cursor-pointer block mt-1"><input type="radio" name="q20" value="c" class="mr-2"> c) -4.9t² + 30t + 30,000</label>
-                    <label class="ml-4 cursor-pointer block mt-1"><input type="radio" name="q20" value="d" class="mr-2"> d) -4.9t² - 30t</label>
-                    <div class="answer-box text-green-700 mt-2 font-medium hidden">✅ Answer: a)</div>
-                </li>
-            </ol>
-        </section>
-
-        <!-- Submit Button -->
-        <div class="text-center no-print pb-8">
-            <button onclick="gradeExam()" class="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white text-lg px-10 py-4 rounded-xl font-bold shadow-xl transition transform hover:scale-105 cursor-pointer">
-                📝 Submit & Auto-Grade Exam
-            </button>
-        </div>
+    <main class="max-w-4xl mx-auto space-y-8" id="exam-content">
+        <!-- Questions rendered by JS -->
     </main>
+
+    <!-- Submit Button -->
+    <div class="text-center no-print pb-8 mt-8">
+        <button onclick="gradeExam()" class="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white text-lg px-10 py-4 rounded-xl font-bold shadow-xl transition transform hover:scale-105 cursor-pointer" data-ar="📝 تسليم وتصحيح الامتحان" data-en="📝 Submit & Grade Exam">📝 تسليم وتصحيح الامتحان</button>
+    </div>
 
     <!-- Results Panel -->
     <div id="results-panel" class="max-w-4xl mx-auto mt-8 bg-white p-8 rounded-2xl shadow-2xl border-t-4 border-emerald-500 hidden no-print">
-        <h2 class="text-3xl font-bold text-gray-900 mb-6 text-center">📊 Exam Results</h2>
+        <h2 class="text-3xl font-bold text-gray-900 mb-6 text-center" data-ar="📊 نتائج الامتحان" data-en="📊 Exam Results">📊 نتائج الامتحان</h2>
         <div class="grid md:grid-cols-3 gap-4 mb-6">
-            <div class="bg-blue-50 p-4 rounded-xl text-center"><p>Student Name</p><p id="res-name" class="font-bold text-xl text-indigo-700">-</p></div>
-            <div class="bg-purple-50 p-4 rounded-xl text-center"><p>Date</p><p id="res-date" class="font-bold text-xl text-purple-700">-</p></div>
-            <div class="bg-emerald-50 p-4 rounded-xl text-center"><p>Total Score</p><p id="res-total" class="font-bold text-3xl text-emerald-600">0 / 100</p></div>
+            <div class="bg-blue-50 p-4 rounded-xl text-center"><p data-ar="اسم الطالب" data-en="Student Name">اسم الطالب</p><p id="res-name" class="font-bold text-xl text-indigo-700">-</p></div>
+            <div class="bg-purple-50 p-4 rounded-xl text-center"><p data-ar="التاريخ" data-en="Date">التاريخ</p><p id="res-date" class="font-bold text-xl text-purple-700">-</p></div>
+            <div class="bg-emerald-50 p-4 rounded-xl text-center"><p data-ar="المجموع" data-en="Score">المجموع</p><p id="res-total" class="font-bold text-3xl text-emerald-600">0 / 100</p></div>
         </div>
 
-        <!-- Success Rate Badge -->
         <div class="text-center mb-6">
-            <span id="success-badge" class="success-badge grade-excellent">Excellent - 100%</span>
+            <span id="success-badge" class="success-badge grade-excellent">-</span>
             <p id="success-percent" class="text-4xl font-bold text-emerald-600 mt-2">100%</p>
-            <p class="text-sm text-gray-500">Success Rate</p>
+            <p class="text-sm text-gray-500" data-ar="نسبة النجاح" data-en="Success Rate">نسبة النجاح</p>
         </div>
 
-        <!-- Email Send Button -->
+        <div class="bg-gray-50 p-6 rounded-xl mb-6">
+            <h3 class="font-bold text-lg mb-4 text-gray-800" data-ar="📈 تفصيل الأداء حسب القسم:" data-en="📈 Performance Breakdown:">📈 تفصيل الأداء حسب القسم:</h3>
+            <div class="space-y-3">
+                <div class="flex justify-between items-center">
+                    <span class="text-gray-700" data-ar="المفاهيم الأساسية" data-en="Basic Concepts">المفاهيم الأساسية</span>
+                    <span id="sec1-score" class="font-bold text-indigo-600">0/4</span>
+                </div>
+                <div class="flex justify-between items-center">
+                    <span class="text-gray-700" data-ar="قاعدة القوة" data-en="Power Rule">قاعدة القوة</span>
+                    <span id="sec2-score" class="font-bold text-indigo-600">0/4</span>
+                </div>
+                <div class="flex justify-between items-center">
+                    <span class="text-gray-700" data-ar="الدوال المثلثية والأسية" data-en="Trig & Exponential">الدوال المثلثية والأسية</span>
+                    <span id="sec3-score" class="font-bold text-indigo-600">0/4</span>
+                </div>
+                <div class="flex justify-between items-center">
+                    <span class="text-gray-700" data-ar="الدوال المثلثية العكسية" data-en="Inverse Trig">الدوال المثلثية العكسية</span>
+                    <span id="sec4-score" class="font-bold text-indigo-600">0/2</span>
+                </div>
+                <div class="flex justify-between items-center">
+                    <span class="text-gray-700" data-ar="الخطية وقاعدة السلسلة العكسية" data-en="Linearity & Chain Rule">الخطية وقاعدة السلسلة العكسية</span>
+                    <span id="sec5-score" class="font-bold text-indigo-600">0/3</span>
+                </div>
+                <div class="flex justify-between items-center">
+                    <span class="text-gray-700" data-ar="التطبيقات والقيم الابتدائية" data-en="Applications & IVP">التطبيقات والقيم الابتدائية</span>
+                    <span id="sec6-score" class="font-bold text-indigo-600">0/3</span>
+                </div>
+            </div>
+        </div>
+
         <div class="text-center mb-6">
-            <button id="sendEmailBtn" onclick="sendResultsToEmail()" class="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white text-lg px-8 py-3 rounded-xl font-bold shadow-xl transition transform hover:scale-105 cursor-pointer">
-                📧 Send Results to Teacher
-            </button>
+            <button id="sendEmailBtn" onclick="sendResultsToEmail()" class="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white text-lg px-8 py-3 rounded-xl font-bold shadow-xl transition transform hover:scale-105 cursor-pointer" data-ar="📧 إرسال النتائج للمعلم" data-en="📧 Send Results to Teacher">📧 إرسال النتائج للمعلم</button>
             <p id="emailStatus" class="text-sm mt-2 text-center font-medium"></p>
         </div>
 
         <div class="flex gap-3 justify-center">
-            <button onclick="window.print()" class="bg-gray-700 text-white px-6 py-3 rounded-lg font-semibold">🖨️ Print Results</button>
+            <button onclick="window.print()" class="bg-gray-700 text-white px-6 py-3 rounded-lg font-semibold" data-ar="🖨️ طباعة النتائج" data-en="🖨️ Print Results">🖨️ طباعة النتائج</button>
         </div>
     </div>
 
     <footer class="max-w-4xl mx-auto mt-10 mb-8 text-center text-gray-500 text-sm no-print">
-        © Grade 12 Advanced Mathematics | Unit 5.1: Antiderivatives & Integrals | Mr. Mohammed Hesham
+        © <span data-ar="الرياضيات للصف الثاني عشر متقدم | الوحدة 1.1: المشتقات العكسية والتكاملات" data-en="Grade 12 Advanced Math | Unit 1.1: Antiderivatives & Integrals">الرياضيات للصف الثاني عشر متقدم | الوحدة 1.1: المشتقات العكسية والتكاملات</span> | Mr. Mohammed Hesham
     </footer>
 
-    <script>
-        // ============================================================
-        // ⚠️ STEP 1: EmailJS Configuration
-        // ============================================================
-        const PUBLIC_KEY = "Rb3Lq8tXaFmc5YHUH";
-        const SERVICE_ID = "service_w15m64i";
-        const TEMPLATE_ID = "template_5b0u2tq";
-        const TARGET_EMAIL = "mohammedhesham872@gmail.com";
-        // ============================================================
-
-        (function(){ emailjs.init(PUBLIC_KEY); })();
-
-        // Timer functionality
-        let timeRemaining = 3600; // 60 minutes in seconds
-        let timerInterval;
-
-        function startTimer() {
-            document.getElementById('timer-container').style.display = 'block';
-            timerInterval = setInterval(() => {
-                timeRemaining--;
-                const minutes = Math.floor(timeRemaining / 60);
-                const seconds = timeRemaining % 60;
-                const timerEl = document.getElementById('timer');
-                timerEl.textContent = `${minutes.toString().padStart(2,'0')}:${seconds.toString().padStart(2,'0')}`;
-                
-                if (timeRemaining <= 300) {
-                    timerEl.classList.add('timer-warning');
+<script>
+// ==================== EXAM DATA (BILINGUAL - 20 QUESTIONS) ====================
+const examData = {
+    sections: [
+        {
+            id: 'sec1',
+            title: { ar: '🔹 الجزء الأول: المفاهيم والتعريفات الأساسية', en: '🔹 Part 1: Basic Concepts & Definitions' },
+            questions: [
+                {
+                    q: { ar: 'ما هي المشتقة العكسية (Antiderivative) للدالة f(x)؟', en: 'What is an antiderivative of a function f(x)?' },
+                    options: [
+                        { ar: 'دالة مشتقتها تساوي f(x)', en: 'A function whose derivative equals f(x)' },
+                        { ar: 'دالة تقسم f(x)', en: 'A function that divides f(x)' },
+                        { ar: 'دالة تضرب f(x)', en: 'A function that multiplies f(x)' },
+                        { ar: 'دالة تساوي صفراً', en: 'A function that equals zero' }
+                    ],
+                    correct: 0,
+                    answer: { ar: 'المشتقة العكسية هي الدالة التي عند اشتقاقها نحصل على f(x)', en: 'Antiderivative is the function whose derivative gives f(x)' }
+                },
+                {
+                    q: { ar: 'إذا كانت F(x) مشتقة عكسية لـ f(x)، فما هي الصيغة العامة لجميع المشتقات العكسية؟', en: 'If F(x) is an antiderivative of f(x), what is the general form of all antiderivatives?' },
+                    options: [
+                        { ar: 'F(x) + 1', en: 'F(x) + 1' },
+                        { ar: 'F(x) + C، حيث C أي ثابت', en: 'F(x) + C, where C is any constant' },
+                        { ar: 'F(x) × C', en: 'F(x) × C' },
+                        { ar: 'F(x) - C', en: 'F(x) - C' }
+                    ],
+                    correct: 1,
+                    answer: { ar: 'جميع المشتقات العكسية تختلف بثابت التكامل C', en: 'All antiderivatives differ by the constant of integration C' }
+                },
+                {
+                    q: { ar: 'ماذا يمثل "+C" (ثابت التكامل) فيزيائياً؟', en: 'What does the "+C" (constant of integration) represent physically?' },
+                    options: [
+                        { ar: 'القيمة العظمى للدالة', en: 'The maximum value of the function' },
+                        { ar: 'المعلمة الابتدائية المجهولة أو الشرط الابتدائي', en: 'The unknown starting parameter or initial condition' },
+                        { ar: 'ميل الدالة', en: 'The slope of the function' },
+                        { ar: 'المساحة تحت المنحنى', en: 'The area under the curve' }
+                    ],
+                    correct: 1,
+                    answer: { ar: 'C يمثل القيمة الابتدائية المجهولة التي تُحدد بشرط ابتدائي', en: 'C represents the unknown initial value determined by an initial condition' }
+                },
+                {
+                    q: { ar: 'وفقاً للنظرية 1.1، إذا كانت F و G كلاهما مشتقة عكسية لـ f على فترة، فإن:', en: 'According to Theorem 1.1, if F and G are both antiderivatives of f on an interval, then:' },
+                    options: [
+                        { ar: 'G(x) = F(x) + C لبعض الثوابت C', en: 'G(x) = F(x) + C for some constant C' },
+                        { ar: 'G(x) = F(x) × C', en: 'G(x) = F(x) × C' },
+                        { ar: 'G(x) = F(x)', en: 'G(x) = F(x)' },
+                        { ar: 'G(x) = F(x) - C', en: 'G(x) = F(x) - C' }
+                    ],
+                    correct: 0,
+                    answer: { ar: 'أي مشتقتين عكسيتين للدالة نفسها تختلفان بثابت فقط', en: 'Any two antiderivatives of the same function differ by a constant only' }
                 }
-                
-                if (timeRemaining <= 0) {
-                    clearInterval(timerInterval);
-                    alert("Time's up! Your exam will be submitted automatically.");
-                    gradeExam();
+            ]
+        },
+        {
+            id: 'sec2',
+            title: { ar: '🔹 الجزء الثاني: قاعدة القوة للتكامل', en: '🔹 Part 2: Power Rule for Integration' },
+            questions: [
+                {
+                    q: { ar: 'ما هو تكامل xⁿ dx (حيث n ≠ -1)؟', en: 'What is the integral of xⁿ dx (where n ≠ -1)?' },
+                    options: [
+                        { ar: 'xⁿ⁺¹/(n+1) + C', en: 'xⁿ⁺¹/(n+1) + C' },
+                        { ar: 'nxⁿ⁻¹ + C', en: 'nxⁿ⁻¹ + C' },
+                        { ar: 'xⁿ⁻¹/(n-1) + C', en: 'xⁿ⁻¹/(n-1) + C' },
+                        { ar: 'nxⁿ⁺¹ + C', en: 'nxⁿ⁺¹ + C' }
+                    ],
+                    correct: 0,
+                    answer: { ar: 'قاعدة القوة: نزيد الأس بواحد ونقسم على الأس الجديد', en: 'Power rule: increase exponent by one and divide by new exponent' }
+                },
+                {
+                    q: { ar: 'احسب: ∫x¹⁷ dx', en: 'Evaluate: ∫x¹⁷ dx' },
+                    options: [
+                        { ar: 'x¹⁸/18 + C', en: 'x¹⁸/18 + C' },
+                        { ar: '17x¹⁶ + C', en: '17x¹⁶ + C' },
+                        { ar: 'x¹⁶/16 + C', en: 'x¹⁶/16 + C' },
+                        { ar: '18x¹⁸ + C', en: '18x¹⁸ + C' }
+                    ],
+                    correct: 0,
+                    answer: { ar: 'نزيد 17 إلى 18 ونقسم على 18', en: 'Increase 17 to 18 and divide by 18' }
+                },
+                {
+                    q: { ar: 'لماذا لا تعمل قاعدة القوة لـ ∫x⁻¹ dx؟', en: 'Why doesn\'t the power rule work for ∫x⁻¹ dx?' },
+                    options: [
+                        { ar: 'تؤدي إلى القسمة على صفر', en: 'It results in division by zero' },
+                        { ar: 'الدالة غير معرفة', en: 'The function is undefined' },
+                        { ar: 'الأس سالب', en: 'The power is negative' },
+                        { ar: 'التكامل غير موجود', en: 'The integral doesn\'t exist' }
+                    ],
+                    correct: 0,
+                    answer: { ar: 'لأن n+1 = 0 مما يؤدي إلى القسمة على صفر', en: 'Because n+1 = 0 which leads to division by zero' }
+                },
+                {
+                    q: { ar: 'ما هو ∫x⁻¹ dx؟', en: 'What is ∫x⁻¹ dx?' },
+                    options: [
+                        { ar: 'ln|x| + C', en: 'ln|x| + C' },
+                        { ar: 'x⁰/0 + C', en: 'x⁰/0 + C' },
+                        { ar: '-x⁻² + C', en: '-x⁻² + C' },
+                        { ar: '-1/x² + C', en: '-1/x² + C' }
+                    ],
+                    correct: 0,
+                    answer: { ar: 'هذه حالة خاصة: تكامل 1/x هو ln|x| + C', en: 'This is a special case: integral of 1/x is ln|x| + C' }
                 }
-            }, 1000);
-        }
-
-        function toggleAnswers() {
-            document.querySelectorAll('.answer-box').forEach(el => el.classList.toggle('hidden'));
-        }
-
-        function gradeExam() {
-            let correctCount = 0;
-            const correctAnswers = [
-                'a','b','b','a',  // Q1-4
-                'a','a','a','a',  // Q5-8
-                'a','b','a','a',  // Q9-12
-                'a','a',          // Q13-14
-                'a','a','d',      // Q15-17
-                'a','a','a'       // Q18-20
-            ];
-
-            for(let i=1; i<=20; i++){
-                const selected = document.querySelector(`input[name="q${i}"]:checked`);
-                const li = document.getElementById(`q-${i}`);
-                const isCorrect = selected && selected.value === correctAnswers[i-1];
-                
-                if (isCorrect) {
-                    correctCount++;
-                    li.classList.add('correct');
-                    li.classList.remove('incorrect');
-                } else {
-                    li.classList.add('incorrect');
-                    li.classList.remove('correct');
+            ]
+        },
+        {
+            id: 'sec3',
+            title: { ar: '🔹 الجزء الثالث: تكامل الدوال المثلثية والأسية', en: '🔹 Part 3: Trigonometric & Exponential Integrals' },
+            questions: [
+                {
+                    q: { ar: 'ما هو ∫cos x dx؟', en: 'What is ∫cos x dx?' },
+                    options: [
+                        { ar: 'sin x + C', en: 'sin x + C' },
+                        { ar: '-sin x + C', en: '-sin x + C' },
+                        { ar: 'cos x + C', en: 'cos x + C' },
+                        { ar: '-cos x + C', en: '-cos x + C' }
+                    ],
+                    correct: 0,
+                    answer: { ar: 'مشتقة sin x هي cos x، إذن تكامل cos x هو sin x + C', en: 'Derivative of sin x is cos x, so integral of cos x is sin x + C' }
+                },
+                {
+                    q: { ar: 'ما هو ∫sin x dx؟', en: 'What is ∫sin x dx?' },
+                    options: [
+                        { ar: 'cos x + C', en: 'cos x + C' },
+                        { ar: '-cos x + C', en: '-cos x + C' },
+                        { ar: 'sin x + C', en: 'sin x + C' },
+                        { ar: '-sin x + C', en: '-sin x + C' }
+                    ],
+                    correct: 1,
+                    answer: { ar: 'مشتقة -cos x هي sin x، إذن التكامل هو -cos x + C', en: 'Derivative of -cos x is sin x, so integral is -cos x + C' }
+                },
+                {
+                    q: { ar: 'ما هو ∫eˣ dx؟', en: 'What is ∫eˣ dx?' },
+                    options: [
+                        { ar: 'eˣ + C', en: 'eˣ + C' },
+                        { ar: 'xeˣ⁻¹ + C', en: 'xeˣ⁻¹ + C' },
+                        { ar: 'eˣ¹/(x+1) + C', en: 'eˣ¹/(x+1) + C' },
+                        { ar: 'ln|x| + C', en: 'ln|x| + C' }
+                    ],
+                    correct: 0,
+                    answer: { ar: 'eˣ هي الدالة الوحيدة التي مشتقتها تساوي نفسها', en: 'eˣ is the unique function whose derivative equals itself' }
+                },
+                {
+                    q: { ar: 'ما هو ∫sec²x dx؟', en: 'What is ∫sec²x dx?' },
+                    options: [
+                        { ar: 'tan x + C', en: 'tan x + C' },
+                        { ar: 'sec x + C', en: 'sec x + C' },
+                        { ar: '-tan x + C', en: '-tan x + C' },
+                        { ar: 'cot x + C', en: 'cot x + C' }
+                    ],
+                    correct: 0,
+                    answer: { ar: 'مشتقة tan x هي sec²x، إذن التكامل هو tan x + C', en: 'Derivative of tan x is sec²x, so integral is tan x + C' }
                 }
-            }
-
-            const score = (correctCount / 20) * 100;
-            const successRate = Math.round(score);
-            
-            document.getElementById('res-total').textContent = `${Math.round(score)} / 100`;
-            document.getElementById('res-name').textContent = document.getElementById('studentName').value || 'Student';
-            document.getElementById('res-date').textContent = new Date().toLocaleDateString();
-            
-            // Update success badge
-            const badge = document.getElementById('success-badge');
-            const percent = document.getElementById('success-percent');
-            percent.textContent = `${successRate}%`;
-            
-            if(successRate >= 90) {
-                badge.textContent = 'Excellent';
-                badge.className = 'success-badge grade-excellent';
-            } else if(successRate >= 75) {
-                badge.textContent = 'Good';
-                badge.className = 'success-badge grade-good';
-            } else if(successRate >= 50) {
-                badge.textContent = 'Pass';
-                badge.className = 'success-badge grade-pass';
-            } else {
-                badge.textContent = 'Needs Improvement';
-                badge.className = 'success-badge grade-fail';
-            }
-            
-            document.getElementById('results-panel').classList.remove('hidden');
-            document.getElementById('results-panel').scrollIntoView({ behavior: 'smooth' });
-            
-            // Show email button after grading
-            document.getElementById('sendEmailBtn').classList.remove('hidden');
+            ]
+        },
+        {
+            id: 'sec4',
+            title: { ar: '🔹 الجزء الرابع: تكامل الدوال المثلثية العكسية', en: '🔹 Part 4: Inverse Trigonometric Integrals' },
+            questions: [
+                {
+                    q: { ar: 'ما هو ∫1/√(1-x²) dx؟', en: 'What is ∫1/√(1-x²) dx?' },
+                    options: [
+                        { ar: 'sin⁻¹x + C', en: 'sin⁻¹x + C' },
+                        { ar: 'cos⁻¹x + C', en: 'cos⁻¹x + C' },
+                        { ar: 'tan⁻¹x + C', en: 'tan⁻¹x + C' },
+                        { ar: 'sec⁻¹x + C', en: 'sec⁻¹x + C' }
+                    ],
+                    correct: 0,
+                    answer: { ar: 'هذه صيغة قياسية: تكامل 1/√(1-x²) هو sin⁻¹x + C', en: 'Standard formula: integral of 1/√(1-x²) is sin⁻¹x + C' }
+                },
+                {
+                    q: { ar: 'ما هو ∫1/(1+x²) dx؟', en: 'What is ∫1/(1+x²) dx?' },
+                    options: [
+                        { ar: 'tan⁻¹x + C', en: 'tan⁻¹x + C' },
+                        { ar: 'sin⁻¹x + C', en: 'sin⁻¹x + C' },
+                        { ar: 'cos⁻¹x + C', en: 'cos⁻¹x + C' },
+                        { ar: 'cot⁻¹x + C', en: 'cot⁻¹x + C' }
+                    ],
+                    correct: 0,
+                    answer: { ar: 'هذه صيغة قياسية: تكامل 1/(1+x²) هو tan⁻¹x + C', en: 'Standard formula: integral of 1/(1+x²) is tan⁻¹x + C' }
+                }
+            ]
+        },
+        {
+            id: 'sec5',
+            title: { ar: '🔹 الجزء الخامس: الخطية وقاعدة السلسلة العكسية', en: '🔹 Part 5: Linearity & Reverse Chain Rule' },
+            questions: [
+                {
+                    q: { ar: 'وفقاً لخاصية الخطية، ∫[af(x) + bg(x)]dx يساوي:', en: 'According to the linearity property, ∫[af(x) + bg(x)]dx equals:' },
+                    options: [
+                        { ar: 'a∫f(x)dx + b∫g(x)dx', en: 'a∫f(x)dx + b∫g(x)dx' },
+                        { ar: '∫af(x)dx × ∫bg(x)dx', en: '∫af(x)dx × ∫bg(x)dx' },
+                        { ar: '(a+b)∫[f(x)+g(x)]dx', en: '(a+b)∫[f(x)+g(x)]dx' },
+                        { ar: 'ab∫f(x)g(x)dx', en: 'ab∫f(x)g(x)dx' }
+                    ],
+                    correct: 0,
+                    answer: { ar: 'التكامل يوزع على الجمع والضرب في ثابت', en: 'Integration distributes over addition and scalar multiplication' }
+                },
+                {
+                    q: { ar: 'ما هو ∫f\'(x)/f(x) dx؟', en: 'What is ∫f\'(x)/f(x) dx?' },
+                    options: [
+                        { ar: 'ln|f(x)| + C', en: 'ln|f(x)| + C' },
+                        { ar: 'f(x) + C', en: 'f(x) + C' },
+                        { ar: 'e^f(x) + C', en: 'e^f(x) + C' },
+                        { ar: 'f\'(x) + C', en: 'f\'(x) + C' }
+                    ],
+                    correct: 0,
+                    answer: { ar: 'هذه قاعدة اللوغاريتم: تكامل مشتقة/الدالة هو ln|الدالة|', en: 'Logarithmic rule: integral of derivative/function is ln|function|' }
+                },
+                {
+                    q: { ar: 'احسب: ∫tan x dx', en: 'Evaluate: ∫tan x dx' },
+                    options: [
+                        { ar: 'ln|tan x| + C', en: 'ln|tan x| + C' },
+                        { ar: 'ln|sec x| + C', en: 'ln|sec x| + C' },
+                        { ar: '-ln|cos x| + C', en: '-ln|cos x| + C' },
+                        { ar: 'كلاهما b و c صحيح', en: 'Both b and c are correct' }
+                    ],
+                    correct: 3,
+                    answer: { ar: 'ln|sec x| = -ln|cos x| لأن sec x = 1/cos x', en: 'ln|sec x| = -ln|cos x| because sec x = 1/cos x' }
+                }
+            ]
+        },
+        {
+            id: 'sec6',
+            title: { ar: '🔹 الجزء السادس: التطبيقات ومسائل القيم الابتدائية', en: '🔹 Part 6: Applications & Initial Value Problems' },
+            questions: [
+                {
+                    q: { ar: 'في مثال مكوك الفضاء، إذا كانت y\'\'(t) = -9.8 m/s²، فما هي v(t)؟', en: 'In the Space Shuttle example, if y\'\'(t) = -9.8 m/s², what is v(t)?' },
+                    options: [
+                        { ar: '-9.8t + C', en: '-9.8t + C' },
+                        { ar: '-4.9t² + C', en: '-4.9t² + C' },
+                        { ar: '-9.8t² + C', en: '-9.8t² + C' },
+                        { ar: '9.8t + C', en: '9.8t + C' }
+                    ],
+                    correct: 0,
+                    answer: { ar: 'تكامل التسارع يعطي السرعة: ∫-9.8 dt = -9.8t + C', en: 'Integral of acceleration gives velocity: ∫-9.8 dt = -9.8t + C' }
+                },
+                {
+                    q: { ar: 'إذا كانت v(0) = -30 m/s (السرعة الابتدائية للأسفل)، فما قيمة C؟', en: 'If v(0) = -30 m/s (initial velocity downward), what is the value of C?' },
+                    options: [
+                        { ar: '-30', en: '-30' },
+                        { ar: '30', en: '30' },
+                        { ar: '0', en: '0' },
+                        { ar: '-9.8', en: '-9.8' }
+                    ],
+                    correct: 0,
+                    answer: { ar: 'نعوض t=0 في v(t) = -9.8t + C لنحصل على C = -30', en: 'Substitute t=0 in v(t) = -9.8t + C to get C = -30' }
+                },
+                {
+                    q: { ar: 'إذا كانت y(0) = 30,000 متر (الارتفاع الابتدائي)، فما هي دالة الموضع y(t)؟', en: 'If y(0) = 30,000 meters (initial altitude), what is the position function y(t)?' },
+                    options: [
+                        { ar: '-4.9t² - 30t + 30,000', en: '-4.9t² - 30t + 30,000' },
+                        { ar: '-9.8t² - 30t + 30,000', en: '-9.8t² - 30t + 30,000' },
+                        { ar: '-4.9t² + 30t + 30,000', en: '-4.9t² + 30t + 30,000' },
+                        { ar: '-4.9t² - 30t', en: '-4.9t² - 30t' }
+                    ],
+                    correct: 0,
+                    answer: { ar: 'تكامل v(t) = -9.8t - 30 يعطي y(t) = -4.9t² - 30t + C، ومع y(0)=30000 يصبح C=30000', en: 'Integral of v(t)=-9.8t-30 gives y(t)=-4.9t²-30t+C, with y(0)=30000 gives C=30000' }
+                }
+            ]
         }
+    ]
+};
 
-        function sendResultsToEmail() {
-            const btn = document.getElementById('sendEmailBtn');
-            const status = document.getElementById('emailStatus');
-            btn.disabled = true;
-            btn.textContent = '⏳ Sending...';
+// ==================== STATE ====================
+let currentLang = 'ar';
+let timeRemaining = 3600;
+let timerInterval;
 
-            const name = document.getElementById('studentName').value || 'N/A';
-            const date = document.querySelector('input[type="text"]').value || new Date().toLocaleDateString();
-            const score = document.getElementById('res-total').textContent;
-            const successRate = document.getElementById('success-percent').textContent;
+// ==================== LANGUAGE SWITCHER ====================
+function setLanguage(lang) {
+    currentLang = lang;
+    document.documentElement.lang = lang;
+    document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
+    
+    document.getElementById('btn-ar').classList.toggle('active', lang === 'ar');
+    document.getElementById('btn-en').classList.toggle('active', lang === 'en');
+    
+    document.body.classList.toggle('en-mode', lang === 'en');
+    
+    document.querySelectorAll('[data-ar][data-en]').forEach(el => {
+        el.textContent = el.getAttribute(`data-${lang}`);
+    });
+    
+    renderExam();
+}
 
-            let answersHTML = `<table style="border:1px solid #e5e7eb; border-collapse:collapse; width:100%; font-family:'Inter', sans-serif; font-size:14px;">
-                <tr style="background:#4F46E5; color:white;"><th style="border:1px solid #e5e7eb; padding:8px;">Q#</th><th style="border:1px solid #e5e7eb; padding:8px;">Selected</th><th style="border:1px solid #e5e7eb; padding:8px;">Status</th></tr>`;
+// ==================== RENDER EXAM ====================
+function renderExam() {
+    const container = document.getElementById('exam-content');
+    const labels = {
+        ar: { option: ['أ', 'ب', 'ج', 'د'], answer: '✅ الإجابة:' },
+        en: { option: ['a', 'b', 'c', 'd'], answer: '✅ Answer:' }
+    };
+    const lbl = labels[currentLang];
+    const isRTL = currentLang === 'ar';
+    
+    let html = '';
+    let globalIdx = 0;
+    examData.sections.forEach((section, sIdx) => {
+        html += `
+        <section class="bg-white p-6 rounded-xl shadow-lg">
+            <h2 class="text-xl font-bold mb-4 text-indigo-700">${section.title[currentLang]}</h2>
+            <ol id="section-${sIdx}-list" class="space-y-4 text-sm">`;
             
-            const correctAnswers = ['a','b','b','a','a','a','a','a','a','b','a','a','a','a','a','a','d','a','a','a'];
+        section.questions.forEach((q, qIdx) => {
+            const qNum = globalIdx + 1;
+            const borderSide = isRTL ? 'border-r-4 pr-4' : 'border-l-4 pl-4';
+            html += `
+                <li class="${borderSide} border-indigo-500 py-2" id="q-${qNum}">
+                    <strong>${qNum}.</strong> ${q.q[currentLang]}<br>`;
+                    
+            q.options.forEach((opt, oIdx) => {
+                const radioSide = isRTL ? 'mr-4 ml-2' : 'ml-4 mr-2';
+                const optLetter = String.fromCharCode(97 + oIdx);
+                html += `
+                    <label class="cursor-pointer block mt-1 ${isRTL ? 'mr-4' : 'ml-4'}">
+                        <input type="radio" name="q${qNum}" value="${optLetter}" class="${radioSide}"> 
+                        ${lbl.option[oIdx]}) ${opt[currentLang]}
+                    </label>`;
+            });
             
-            for(let i=1; i<=20; i++) {
-                const sel = document.querySelector(`input[name="q${i}"]:checked`);
-                const isCorrect = sel && sel.value === correctAnswers[i-1];
-                answersHTML += `<tr><td style="border:1px solid #e5e7eb; padding:6px;">${i}</td><td style="border:1px solid #e5e7eb; padding:6px;">${sel ? sel.value.toUpperCase() : '-'}</td><td style="border:1px solid #e5e7eb; padding:6px; color:${isCorrect ? 'green' : 'red'}">${isCorrect ? '✅ Correct' : '❌ Incorrect'}</td></tr>`;
-            }
-            answersHTML += '</table>';
+            html += `
+                    <div class="answer-box text-green-700 mt-2 font-medium hidden">
+                        ${lbl.answer} ${lbl.option[q.correct]}) ${q.options[q.correct][currentLang]} — ${q.answer[currentLang]}
+                    </div>
+                </li>`;
+            globalIdx++;
+        });
+        
+        html += `
+            </ol>
+        </section>`;
+    });
+    
+    container.innerHTML = html;
+}
 
-            const templateParams = {
-                to_email: TARGET_EMAIL,
-                student_name: name,
-                exam_date: date,
-                total_score: score,
-                success_rate: successRate,
-                answers_table: answersHTML
-            };
-
-            emailjs.send(SERVICE_ID, TEMPLATE_ID, templateParams)
-                .then(() => {
-                    status.textContent = '✅ Sent successfully! Check your Gmail.';
-                    status.style.color = '#059669';
-                    btn.textContent = '✓ Sent';
-                })
-                .catch(err => {
-                    status.textContent = '❌ Failed. Check console or setup.';
-                    status.style.color = '#dc2626';
-                    btn.disabled = false;
-                    btn.textContent = '📧 Retry Send';
-                    console.error('EmailJS Error:', err);
-                });
+// ==================== TIMER ====================
+function startTimer() {
+    document.getElementById('timer-container').style.display = 'block';
+    timerInterval = setInterval(() => {
+        timeRemaining--;
+        const minutes = Math.floor(timeRemaining / 60);
+        const seconds = timeRemaining % 60;
+        const timerEl = document.getElementById('timer');
+        timerEl.textContent = `${minutes.toString().padStart(2,'0')}:${seconds.toString().padStart(2,'0')}`;
+        if (timeRemaining <= 300) timerEl.classList.add('timer-warning');
+        if (timeRemaining <= 0) {
+            clearInterval(timerInterval);
+            alert(currentLang === 'ar' ? "انتهى الوقت! سيتم تسليم الامتحان تلقائياً." : "Time's up! Exam will be submitted automatically.");
+            gradeExam();
         }
+    }, 1000);
+}
 
-        // Initialize timer on page load
-        window.addEventListener('DOMContentLoaded', startTimer);
-    </script>
+function toggleAnswers() {
+    document.querySelectorAll('.answer-box').forEach(el => el.classList.toggle('hidden'));
+}
+
+// ==================== GRADING ====================
+function gradeExam() {
+    let correctCount = 0;
+    const correctAnswersLetters = [
+        'a','b','b','a',  // Q1-4: Basic Concepts
+        'a','a','a','a',  // Q5-8: Power Rule
+        'a','b','a','a',  // Q9-12: Trig & Exp
+        'a','a',          // Q13-14: Inverse Trig
+        'a','a','d',      // Q15-17: Linearity
+        'a','a','a'       // Q18-20: Applications
+    ];
+    
+    let sec1 = 0, sec2 = 0, sec3 = 0, sec4 = 0, sec5 = 0, sec6 = 0;
+    
+    for (let i = 1; i <= 20; i++) {
+        const selected = document.querySelector(`input[name="q${i}"]:checked`);
+        const li = document.getElementById(`q-${i}`);
+        const isCorrect = selected && selected.value === correctAnswersLetters[i-1];
+        
+        if (isCorrect) {
+            correctCount++;
+            li.classList.add('correct');
+            li.classList.remove('incorrect');
+            if (i <= 4) sec1++;
+            else if (i <= 8) sec2++;
+            else if (i <= 12) sec3++;
+            else if (i <= 14) sec4++;
+            else if (i <= 17) sec5++;
+            else sec6++;
+        } else {
+            li.classList.add('incorrect');
+            li.classList.remove('correct');
+        }
+    }
+
+    const score = (correctCount / 20) * 100;
+    const successRate = Math.round(score);
+    
+    document.getElementById('res-total').textContent = `${Math.round(score)} / 100`;
+    document.getElementById('res-name').textContent = document.getElementById('studentName').value || (currentLang === 'ar' ? 'طالب' : 'Student');
+    document.getElementById('res-date').textContent = new Date().toLocaleDateString(currentLang === 'ar' ? 'ar-AE' : 'en-US');
+    
+    document.getElementById('sec1-score').textContent = `${sec1}/4`;
+    document.getElementById('sec2-score').textContent = `${sec2}/4`;
+    document.getElementById('sec3-score').textContent = `${sec3}/4`;
+    document.getElementById('sec4-score').textContent = `${sec4}/2`;
+    document.getElementById('sec5-score').textContent = `${sec5}/3`;
+    document.getElementById('sec6-score').textContent = `${sec6}/3`;
+    
+    const badge = document.getElementById('success-badge');
+    const percent = document.getElementById('success-percent');
+    percent.textContent = `${successRate}%`;
+    
+    if (currentLang === 'ar') {
+        if (successRate >= 90) { badge.textContent = 'ممتاز'; badge.className = 'success-badge grade-excellent'; }
+        else if (successRate >= 75) { badge.textContent = 'جيد جداً'; badge.className = 'success-badge grade-good'; }
+        else if (successRate >= 50) { badge.textContent = 'جيد'; badge.className = 'success-badge grade-pass'; }
+        else { badge.textContent = 'يحتاج تحسين'; badge.className = 'success-badge grade-fail'; }
+    } else {
+        if (successRate >= 90) { badge.textContent = 'Excellent'; badge.className = 'success-badge grade-excellent'; }
+        else if (successRate >= 75) { badge.textContent = 'Very Good'; badge.className = 'success-badge grade-good'; }
+        else if (successRate >= 50) { badge.textContent = 'Good'; badge.className = 'success-badge grade-pass'; }
+        else { badge.textContent = 'Needs Improvement'; badge.className = 'success-badge grade-fail'; }
+    }
+    
+    document.getElementById('results-panel').classList.remove('hidden');
+    document.getElementById('results-panel').scrollIntoView({ behavior: 'smooth' });
+    document.getElementById('sendEmailBtn').classList.remove('hidden');
+}
+
+// ==================== EMAIL ====================
+function sendResultsToEmail() {
+    const btn = document.getElementById('sendEmailBtn');
+    const status = document.getElementById('emailStatus');
+    btn.disabled = true;
+    btn.textContent = currentLang === 'ar' ? '⏳ جاري الإرسال...' : '⏳ Sending...';
+
+    const name = document.getElementById('studentName').value || 'N/A';
+    const date = document.querySelector('input[type="text"]').value || new Date().toLocaleDateString(currentLang === 'ar' ? 'ar-AE' : 'en-US');
+    const score = document.getElementById('res-total').textContent;
+    const successRate = document.getElementById('success-percent').textContent;
+    const sec1 = document.getElementById('sec1-score').textContent;
+    const sec2 = document.getElementById('sec2-score').textContent;
+    const sec3 = document.getElementById('sec3-score').textContent;
+    const sec4 = document.getElementById('sec4-score').textContent;
+    const sec5 = document.getElementById('sec5-score').textContent;
+    const sec6 = document.getElementById('sec6-score').textContent;
+
+    const dir = currentLang === 'ar' ? 'rtl' : 'ltr';
+    const font = currentLang === 'ar' ? 'Cairo' : 'Inter';
+    
+    const sectionNames = {
+        ar: ['المفاهيم الأساسية', 'قاعدة القوة', 'الدوال المثلثية والأسية', 'الدوال المثلثية العكسية', 'الخطية وقاعدة السلسلة', 'التطبيقات'],
+        en: ['Basic Concepts', 'Power Rule', 'Trig & Exponential', 'Inverse Trig', 'Linearity & Chain Rule', 'Applications']
+    };
+    const sn = sectionNames[currentLang];
+
+    let answersHTML = `<div dir="${dir}" style="font-family: '${font}', sans-serif;">
+        <h3 style="color:#4F46E5;">📊 ${currentLang === 'ar' ? 'تفصيل الأداء - امتحان المشتقات العكسية (1.1)' : 'Performance Details - Antiderivatives Exam (1.1)'}:</h3>
+        <p><strong>${currentLang === 'ar' ? 'الطالب' : 'Student'}:</strong> ${name}</p>
+        <ul>
+            <li>${sn[0]}: ${sec1}</li>
+            <li>${sn[1]}: ${sec2}</li>
+            <li>${sn[2]}: ${sec3}</li>
+            <li>${sn[3]}: ${sec4}</li>
+            <li>${sn[4]}: ${sec5}</li>
+            <li>${sn[5]}: ${sec6}</li>
+        </ul>
+        <table style="border:1px solid #e5e7eb; border-collapse:collapse; width:100%; font-size:14px; direction: ${dir};">
+        <tr style="background:#4F46E5; color:white;"><th style="border:1px solid #e5e7eb; padding:8px;">${currentLang === 'ar' ? 'السؤال' : 'Q#'}</th><th style="border:1px solid #e5e7eb; padding:8px;">${currentLang === 'ar' ? 'الإجابة المختارة' : 'Selected'}</th><th style="border:1px solid #e5e7eb; padding:8px;">${currentLang === 'ar' ? 'الحالة' : 'Status'}</th></tr>`;
+    
+    const correctAnswersLetters = ['a','b','b','a','a','a','a','a','a','b','a','a','a','a','a','a','d','a','a','a'];
+    
+    for (let i = 1; i <= 20; i++) {
+        const sel = document.querySelector(`input[name="q${i}"]:checked`);
+        const isCorrect = sel && sel.value === correctAnswersLetters[i-1];
+        answersHTML += `<tr><td style="border:1px solid #e5e7eb; padding:6px;">${i}</td><td style="border:1px solid #e5e7eb; padding:6px;">${sel ? sel.value.toUpperCase() : '-'}</td><td style="border:1px solid #e5e7eb; padding:6px; color:${isCorrect ? 'green' : 'red'}">${isCorrect ? '✅ ' + (currentLang === 'ar' ? 'صحيح' : 'Correct') : '❌ ' + (currentLang === 'ar' ? 'خطأ' : 'Wrong')}</td></tr>`;
+    }
+    answersHTML += '</table></div>';
+
+    const PUBLIC_KEY = "Rb3Lq8tXaFmc5YHUH";
+    const SERVICE_ID = "service_w15m64i";
+    const TEMPLATE_ID = "template_5b0u2tq";
+    const TARGET_EMAIL = "mohammedhesham872@gmail.com";
+
+    emailjs.init(PUBLIC_KEY);
+    const templateParams = {
+        to_email: TARGET_EMAIL,
+        student_name: name,
+        exam_date: date,
+        total_score: score,
+        success_rate: successRate,
+        answers_table: answersHTML
+    };
+
+    emailjs.send(SERVICE_ID, TEMPLATE_ID, templateParams)
+        .then(() => {
+            status.textContent = currentLang === 'ar' ? '✅ تم الإرسال بنجاح! تحقق من Gmail.' : '✅ Sent successfully! Check Gmail.';
+            status.style.color = '#059669';
+            btn.textContent = currentLang === 'ar' ? '✓ تم الإرسال' : '✓ Sent';
+        })
+        .catch(err => {
+            status.textContent = currentLang === 'ar' ? '❌ فشل الإرسال. تحقق من الإعدادات.' : '❌ Failed to send. Check settings.';
+            status.style.color = '#dc2626';
+            btn.disabled = false;
+            btn.textContent = currentLang === 'ar' ? '📧 إعادة المحاولة' : '📧 Retry';
+            console.error('EmailJS Error:', err);
+        });
+}
+
+// Initialize
+window.addEventListener('DOMContentLoaded', () => {
+    renderExam();
+    startTimer();
+});
+</script>
 </body>
 </html>
